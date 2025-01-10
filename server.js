@@ -15,7 +15,6 @@ let usuarios = [
   { id: 1, username: 'admin', password: '123', appid: 7 }
 ];
 
-let motos = [];
 
 // Endpoint para login
 app.post('/auth/login', (req, res) => {
@@ -41,42 +40,6 @@ app.post('/auth/login', (req, res) => {
     });
   }
 });
-
-// Endpoint para agregar múltiples motos
-app.post('/motos', (req, res) => {
-  const nuevasMotos = req.body;
-
-  if (!Array.isArray(nuevasMotos)) {
-    return res.status(400).json({ mensaje: 'Se esperaba un array de registros.' });
-  }
-
-  const camposRequeridos = ['empresa', 'representante', 'zona', 'placa', 'propietario', 'conductor', 'estado', 'afiliado'];
-  const errores = [];
-
-  nuevasMotos.forEach((moto, index) => {
-    const faltantes = camposRequeridos.filter(campo => !moto[campo]);
-    if (faltantes.length > 0) {
-      errores.push(`Registro ${index + 1}: Faltan los campos ${faltantes.join(', ')}`);
-    } else {
-      motos.push(moto); // Agregar moto al array en memoria
-    }
-  });
-
-  if (errores.length > 0) {
-    return res.status(400).json({ mensaje: 'Errores en los datos:', errores });
-  }
-
-  res.status(201).json({
-    mensaje: 'Registros de motos agregados exitosamente.',
-    data: nuevasMotos
-  });
-});
-
-// Endpoint para listar las motos
-app.get('/motos', (req, res) => {
-  res.status(200).json(motos);
-});
-
 // Iniciar el servidor
 const PORT = 3000;
 app.listen(PORT, () => {
